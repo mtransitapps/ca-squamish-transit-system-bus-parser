@@ -1,25 +1,33 @@
 package org.mtransit.parser.ca_squamish_transit_system_bus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.DefaultAgencyTools;
+import org.mtransit.parser.Pair;
+import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.Utils;
+import org.mtransit.parser.SplitUtils.RouteTripSpec;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
 import org.mtransit.parser.gtfs.data.GSpec;
+import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
+import org.mtransit.parser.gtfs.data.GTripStop;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MInboundType;
 import org.mtransit.parser.mt.data.MRoute;
+import org.mtransit.parser.mt.data.MTripStop;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.mt.data.MTrip;
 
-// http://bctransit.com/*/footer/open-data
-// http://bctransit.com/servlet/bctransit/data/GTFS.zip
-// http://bct2.baremetal.com:8080/GoogleTransit/BCTransit/google_transit.zip
+// https://bctransit.com/*/footer/open-data
+// https://bctransit.com/servlet/bctransit/data/GTFS - Squamish
 public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -140,18 +148,118 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
+	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
+	static {
+		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
+		map2.put(2L, new RouteTripSpec(2L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Highlands") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"102813", // Westbound Pomona at Perth
+								"134028", // ==
+								"102733", // !=
+								"102783", // ==
+								"102796", // Westbound Garibaldi Way at Tantalus
+								"102776", // !=
+								"102769", // <>
+								"102774", // !=
+								"102729", // Westbound Pemberton at Third
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"102729", // Westbound Pemberton at Third
+								"102760", // ==
+								"102764", // !=
+								"134035", // !=
+								"102767", // ==
+								"102773", // == !=
+								"102769", // != <>
+								"102775", // == !=
+								"102790", // ==
+								"134029", // !=
+								"102780", // Southbound Diamond Head at Mamquam
+								"102784", // !=
+								"102791", // ==
+								"102801", // ==
+								"102711", // !=
+								"102708", // !=
+								"102802", // ==
+								"102813", // Westbound Pomona at Perth
+						})) //
+				.compileBothTripSort());
+		map2.put(3L, new RouteTripSpec(3L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"102762", // Northbound Spruce at Chestnut
+								"102729", // Westbound Pemberton at Third
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"102729", // Westbound Pemberton at Third
+								"102734", // ==
+								"102706", // !=
+								"102705", // !=
+								"102747", // ==
+								"102762", // Northbound Spruce at Chestnut
+						})) //
+				.compileBothTripSort());
+		map2.put(4L, new RouteTripSpec(4L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "Tantalus") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"102564", // Southbound 41105 block Tantalus
+								"102729", // Westbound Pemberton at Third
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"102729", // Westbound Pemberton at Third
+								"102565", // Northbound 41105 block Tantalus
+						})) //
+				.compileBothTripSort());
+		ALL_ROUTE_TRIPS2 = map2;
+	}
+
+	@Override
+	public int compareEarly(long routeId, List<MTripStop> list1, List<MTripStop> list2, MTripStop ts1, MTripStop ts2, GStop ts1GStop, GStop ts2GStop) {
+		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
+			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
+		}
+		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
+	}
+
+	@Override
+	public ArrayList<MTrip> splitTrip(MRoute mRoute, GTrip gTrip, GSpec gtfs) {
+		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
+			return ALL_ROUTE_TRIPS2.get(mRoute.getId()).getAllTrips();
+		}
+		return super.splitTrip(mRoute, gTrip, gtfs);
+	}
+
+	@Override
+	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
+		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
+			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()));
+		}
+		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
+	}
+
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
-		if (mRoute.getId() == 3l) {
-			if (gTrip.getDirectionId() == 0) {
-				mTrip.setHeadsignInbound(MInboundType.INBOUND);
-				return;
-			} else if (gTrip.getDirectionId() == 1) {
-				mTrip.setHeadsignInbound(MInboundType.OUTBOUND);
-				return;
-			}
+		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
+			return; // split
 		}
 		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId());
+	}
+
+	@Override
+	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
+		System.exit(-1);
+		return false;
 	}
 
 	private static final String EXCH = "Exch";
@@ -183,7 +291,6 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	private static final Pattern STARTS_WITH_BOUND = Pattern.compile("(^(east|west|north|south)bound)", Pattern.CASE_INSENSITIVE);
-
 
 	@Override
 	public String cleanStopName(String gStopName) {
