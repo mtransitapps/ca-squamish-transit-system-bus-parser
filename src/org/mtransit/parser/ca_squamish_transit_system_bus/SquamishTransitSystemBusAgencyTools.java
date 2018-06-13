@@ -221,6 +221,22 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 								"102565", // Northbound 41105 block Tantalus
 						})) //
 				.compileBothTripSort());
+		map2.put(5L, new RouteTripSpec(5L, //
+				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				1, MTrip.HEADSIGN_TYPE_STRING, "South Parks") //
+				.addTripSort(0, //
+						Arrays.asList(new String[] { //
+						"134025", // Shannon Falls (NB)
+								"134036", // ++
+								"102729", // Pemberton at Third (WB)
+						})) //
+				.addTripSort(1, //
+						Arrays.asList(new String[] { //
+						"102729", // Pemberton at Third (WB)
+								"102730", // ++
+								"134025", // Shannon Falls (NB)
+						})) //
+				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
 
