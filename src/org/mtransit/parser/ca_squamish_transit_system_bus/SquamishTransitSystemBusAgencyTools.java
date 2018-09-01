@@ -121,6 +121,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	private static final String AGENCY_COLOR_GREEN = "34B233";// GREEN (from PDF Corporate Graphic Standards)
+	@SuppressWarnings("unused")
 	private static final String AGENCY_COLOR_BLUE = "002C77"; // BLUE (from PDF Corporate Graphic Standards)
 
 	private static final String AGENCY_COLOR = AGENCY_COLOR_GREEN;
@@ -130,24 +131,23 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
-	private static final String COLOR_F78B1F = "F78B1F";
-	private static final String COLOR_004B8D = "004B8D";
-	private static final String COLOR_8CC63F = "8CC63F";
-	private static final String COLOR_FB298C = "FB298C";
-
 	@Override
 	public String getRouteColor(GRoute gRoute) {
 		if (StringUtils.isEmpty(gRoute.getRouteColor())) {
 			int rsn = Integer.parseInt(gRoute.getRouteShortName());
 			switch (rsn) {
 			// @formatter:off
-			case 1: return COLOR_004B8D;
-			case 2: return COLOR_8CC63F;
-			case 3: return COLOR_F78B1F;
-			case 4: return COLOR_FB298C;
+			case 1: return "004B8D";
+			case 2: return "8CC63F";
+			case 3: return "F78B1F";
+			case 4: return "FB298C";
+			case 5: return "00ADEE";
+			case 9: return "AB5C3B";
 			// @formatter:on
 			default:
-				return AGENCY_COLOR_BLUE;
+				System.out.printf("\nUnexpected route color for %s!\n", gRoute);
+				System.exit(-1);
+				return null;
 			}
 		}
 		return super.getRouteColor(gRoute);
@@ -156,43 +156,6 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
-		map2.put(2L, new RouteTripSpec(2L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
-				1, MTrip.HEADSIGN_TYPE_STRING, "Highlands") //
-				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"102813", // Westbound Pomona at Perth
-								"134028", // ==
-								"102733", // !=
-								"102783", // ==
-								"102796", // Westbound Garibaldi Way at Tantalus
-								"102776", // !=
-								"102769", // <>
-								"102774", // !=
-								"102729", // Westbound Pemberton at Third
-						})) //
-				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"102729", // Westbound Pemberton at Third
-								"102760", // ==
-								"102764", // !=
-								"134035", // !=
-								"102767", // ==
-								"102773", // == !=
-								"102769", // != <>
-								"102775", // == !=
-								"102790", // ==
-								"134029", // !=
-								"102780", // Southbound Diamond Head at Mamquam
-								"102784", // !=
-								"102791", // ==
-								"102801", // ==
-								"102711", // !=
-								"102708", // !=
-								"102802", // ==
-								"102813", // Westbound Pomona at Perth
-						})) //
-				.compileBothTripSort());
 		map2.put(3L, new RouteTripSpec(3L, //
 				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
 				1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
@@ -210,36 +173,6 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 								"102705", // !=
 								"102747", // ==
 								"102762", // Northbound Spruce at Chestnut
-						})) //
-				.compileBothTripSort());
-		map2.put(4L, new RouteTripSpec(4L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
-				1, MTrip.HEADSIGN_TYPE_STRING, "Tantalus") //
-				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"102564", // Southbound 41105 block Tantalus
-								"102729", // Westbound Pemberton at Third
-						})) //
-				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"102729", // Westbound Pemberton at Third
-								"102565", // Northbound 41105 block Tantalus
-						})) //
-				.compileBothTripSort());
-		map2.put(5L, new RouteTripSpec(5L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
-				1, MTrip.HEADSIGN_TYPE_STRING, "South Parks") //
-				.addTripSort(0, //
-						Arrays.asList(new String[] { //
-						"134025", // Shannon Falls (NB)
-								"134036", // ++
-								"102729", // Pemberton at Third (WB)
-						})) //
-				.addTripSort(1, //
-						Arrays.asList(new String[] { //
-						"102729", // Pemberton at Third (WB)
-								"102730", // ++
-								"134025", // Shannon Falls (NB)
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
@@ -288,6 +221,14 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 2L) {
+			if (Arrays.asList( //
+					"Garibaldi Vlg", //
+					"Downtown" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
+				return true;
+			}
 		}
 		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
@@ -298,8 +239,8 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern EXCHANGE = Pattern.compile("((^|\\W){1}(exchange)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String EXCHANGE_REPLACEMENT = "$2" + EXCH + "$4";
 
-	private static final Pattern ENDS_WITH_VIA = Pattern.compile("( via .*$)", Pattern.CASE_INSENSITIVE);
-	private static final Pattern STARTS_WITH_TO = Pattern.compile("(^.* to )", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ENDS_WITH_VIA = Pattern.compile("(( |\\-)via .*$)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern STARTS_WITH_TO = Pattern.compile("(^.*to )", Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern AND = Pattern.compile("( and )", Pattern.CASE_INSENSITIVE);
 	private static final String AND_REPLACEMENT = " & ";
