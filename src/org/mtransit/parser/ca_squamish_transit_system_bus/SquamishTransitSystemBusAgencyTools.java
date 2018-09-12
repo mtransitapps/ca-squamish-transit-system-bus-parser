@@ -28,6 +28,7 @@ import org.mtransit.parser.mt.data.MTrip;
 
 // https://bctransit.com/*/footer/open-data
 // https://bctransit.com/servlet/bctransit/data/GTFS - Squamish
+// https://squamish.mapstrat.com/current/google_transit.zip
 public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -56,7 +57,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return this.serviceIds != null && this.serviceIds.isEmpty();
 	}
 
-	private static final String INCLUDE_ONLY_SERVICE_ID_CONTAINS = "SQU";
+	private static final String INCLUDE_ONLY_SERVICE_ID_CONTAINS = null;
 
 	@Override
 	public boolean excludeCalendar(GCalendar gCalendar) {
@@ -80,7 +81,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return super.excludeCalendarDate(gCalendarDates);
 	}
 
-	private static final String INCLUDE_AGENCY_ID = "4"; // Squamish Transit System only
+	private static final String INCLUDE_AGENCY_ID = "1"; // Squamish Transit System only
 
 	@Override
 	public boolean excludeRoute(GRoute gRoute) {
@@ -153,26 +154,30 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
+	// TRIP DIRECTION ID USED BY REAL-TIME API
+	private static final int COUNTERCLOCKWISE_0 = 0;
+	private static final int COUNTERCLOCKWISE_1 = 1;
+
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
 		map2.put(3L, new RouteTripSpec(3L, //
-				0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
-				1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
-				.addTripSort(0, //
+				COUNTERCLOCKWISE_0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				COUNTERCLOCKWISE_1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
+				.addTripSort(COUNTERCLOCKWISE_0, //
 						Arrays.asList(new String[] { //
-						"102762", // Northbound Spruce at Chestnut
-								"102749", // ++
-								"102729", // Westbound Pemberton at Third #DOWNTOWN
+						Stops.ALL_STOPS.get("102762"), // Northbound Spruce at Chestnut
+								Stops.ALL_STOPS.get("102749"), // ++ Westway at Cedar (SB)
+								Stops.ALL_STOPS.get("102729"), // Westbound Pemberton at Third #DOWNTOWN
 						})) //
-				.addTripSort(1, //
+				.addTripSort(COUNTERCLOCKWISE_1, //
 						Arrays.asList(new String[] { //
-						"102729", // Westbound Pemberton at Third #DOWNTOWN
-								"102734", // ==
-								"102706", // !=
-								"102705", // !=
-								"102747", // ==
-								"102762", // Northbound Spruce at Chestnut
+						Stops.ALL_STOPS.get("102729"), // Westbound Pemberton at Third #DOWNTOWN
+								Stops.ALL_STOPS.get("102734"), // == Cleveland at Hunter (EB)
+								Stops.ALL_STOPS.get("102706"), // != Behrner at Clarke (NB)
+								Stops.ALL_STOPS.get("102705"), // != Clarke at Behrner (SB)
+								Stops.ALL_STOPS.get("102747"), // == Guilford at Westway (EB)
+								Stops.ALL_STOPS.get("102762"), // Northbound Spruce at Chestnut
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
@@ -229,6 +234,14 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
 				return true;
 			}
+		} else if (mTrip.getRouteId() == 3L) {
+			if (Arrays.asList( //
+					"Valleycliffe", //
+					"Valleycliffe-Spruce Loop Only" //
+			).containsAll(headsignsValues)) {
+				mTrip.setHeadsignString("Valleycliffe", mTrip.getHeadsignId());
+				return true;
+			}
 		}
 		System.out.printf("\nUnexpected trips to merge: %s & %s!\n", mTrip, mTripToMerge);
 		System.exit(-1);
@@ -273,5 +286,10 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		gStopName = CleanUtils.cleanStreetTypes(gStopName);
 		gStopName = CleanUtils.cleanNumbers(gStopName);
 		return CleanUtils.cleanLabel(gStopName);
+	}
+
+	@Override
+	public int getStopId(GStop gStop) {
+		return Integer.parseInt(gStop.getStopCode()); // use stop code as stop ID
 	}
 }
