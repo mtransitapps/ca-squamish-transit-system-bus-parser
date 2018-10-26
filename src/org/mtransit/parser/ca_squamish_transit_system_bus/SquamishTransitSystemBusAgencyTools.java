@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mtransit.commons.StrategicMappingCommons;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
@@ -154,23 +155,20 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
-	// TRIP DIRECTION ID USED BY REAL-TIME API
-	private static final int COUNTERCLOCKWISE_0 = 0;
-	private static final int COUNTERCLOCKWISE_1 = 1;
 
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
 		map2.put(3L, new RouteTripSpec(3L, //
-				COUNTERCLOCKWISE_0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
-				COUNTERCLOCKWISE_1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
-				.addTripSort(COUNTERCLOCKWISE_0, //
+				StrategicMappingCommons.COUNTERCLOCKWISE_0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
+				StrategicMappingCommons.COUNTERCLOCKWISE_1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
+				.addTripSort(StrategicMappingCommons.COUNTERCLOCKWISE_0, //
 						Arrays.asList(new String[] { //
 						Stops.ALL_STOPS.get("102762"), // Northbound Spruce at Chestnut
 								Stops.ALL_STOPS.get("102749"), // ++ Westway at Cedar (SB)
 								Stops.ALL_STOPS.get("102729"), // Westbound Pemberton at Third #DOWNTOWN
 						})) //
-				.addTripSort(COUNTERCLOCKWISE_1, //
+				.addTripSort(StrategicMappingCommons.COUNTERCLOCKWISE_1, //
 						Arrays.asList(new String[] { //
 						Stops.ALL_STOPS.get("102729"), // Westbound Pemberton at Third #DOWNTOWN
 								Stops.ALL_STOPS.get("102734"), // == Cleveland at Hunter (EB)
