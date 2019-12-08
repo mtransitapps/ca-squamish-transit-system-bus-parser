@@ -164,18 +164,18 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 				StrategicMappingCommons.COUNTERCLOCKWISE_1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
 				.addTripSort(StrategicMappingCommons.COUNTERCLOCKWISE_0, //
 						Arrays.asList(new String[] { //
-						Stops.ALL_STOPS.get("102762"), // Northbound Spruce at Chestnut
-								Stops.ALL_STOPS.get("102749"), // ++ Westway at Cedar (SB)
-								Stops.ALL_STOPS.get("102729"), // Westbound Pemberton at Third #DOWNTOWN
+						Stops.getALL_STOPS().get("102762"), // Northbound Spruce at Chestnut
+								Stops.getALL_STOPS().get("102749"), // ++ Westway at Cedar (SB)
+								Stops.getALL_STOPS().get("102729"), // Westbound Pemberton at Third #DOWNTOWN
 						})) //
 				.addTripSort(StrategicMappingCommons.COUNTERCLOCKWISE_1, //
 						Arrays.asList(new String[] { //
-						Stops.ALL_STOPS.get("102729"), // Westbound Pemberton at Third #DOWNTOWN
-								Stops.ALL_STOPS.get("102734"), // == Cleveland at Hunter (EB)
-								Stops.ALL_STOPS.get("102706"), // != Behrner at Clarke (NB)
-								Stops.ALL_STOPS.get("102705"), // != Clarke at Behrner (SB)
-								Stops.ALL_STOPS.get("102747"), // == Guilford at Westway (EB)
-								Stops.ALL_STOPS.get("102762"), // Northbound Spruce at Chestnut
+						Stops.getALL_STOPS().get("102729"), // Westbound Pemberton at Third #DOWNTOWN
+								Stops.getALL_STOPS().get("102734"), // == Cleveland at Hunter (EB)
+								Stops.getALL_STOPS().get("102706"), // != Behrner at Clarke (NB)
+								Stops.getALL_STOPS().get("102705"), // != Clarke at Behrner (SB)
+								Stops.getALL_STOPS().get("102747"), // == Guilford at Westway (EB)
+								Stops.getALL_STOPS().get("102762"), // Northbound Spruce at Chestnut
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
