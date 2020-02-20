@@ -227,6 +227,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		} else if (mTrip.getRouteId() == 2L) {
 			if (Arrays.asList( //
 					"Garibaldi Vlg", //
+					"Brackendale", //
 					"Downtown" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
@@ -234,8 +235,8 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 			}
 		} else if (mTrip.getRouteId() == 3L) {
 			if (Arrays.asList( //
-					"Valleycliffe", //
-					"Valleycliffe-Spruce Loop Only" //
+					"Valleycliffe-Spruce Loop Only", //
+					"Valleycliffe" //
 			).containsAll(headsignsValues)) {
 				mTrip.setHeadsignString("Valleycliffe", mTrip.getHeadsignId());
 				return true;
