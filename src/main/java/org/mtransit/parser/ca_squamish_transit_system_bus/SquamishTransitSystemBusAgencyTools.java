@@ -116,8 +116,8 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public long getRouteId(GRoute gRoute) {
-		return Long.parseLong(gRoute.getRouteShortName()); // use route short name as route ID
+	public long getRouteId(GRoute gRoute) { // used by GTFS-RT
+		return super.getRouteId(gRoute);
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
-		map2.put(3L, new RouteTripSpec(3L, //
+		map2.put(3L, new RouteTripSpec(3L, // 3 //
 				StrategicMappingCommons.COUNTERCLOCKWISE_0, MTrip.HEADSIGN_TYPE_STRING, "Downtown", //
 				StrategicMappingCommons.COUNTERCLOCKWISE_1, MTrip.HEADSIGN_TYPE_STRING, "Valleycliffe") //
 				.addTripSort(StrategicMappingCommons.COUNTERCLOCKWISE_0, //
@@ -211,18 +211,23 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
 
+	private final HashMap<Long, Long> routeIdToShortName = new HashMap<>();
+
 	@Override
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
 		}
+		final long rsn = Long.parseLong(mRoute.getShortName());
+		this.routeIdToShortName.put(mRoute.getId(), rsn);
 		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), gTrip.getDirectionId());
 	}
 
 	@Override
 	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
 		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
-		if (mTrip.getRouteId() == 1L) {
+		final long rsn = this.routeIdToShortName.get(mTrip.getRouteId());
+		if (rsn == 1L) {
 			if (Arrays.asList( //
 					"Garibaldi Vlg", //
 					"Downtown" //
@@ -230,7 +235,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
 				return true;
 			}
-		} else if (mTrip.getRouteId() == 2L) {
+		} else if (rsn == 2L) {
 			if (Arrays.asList( //
 					"Garibaldi Vlg", //
 					"Brackendale", //
@@ -239,7 +244,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
 				return true;
 			}
-		} else if (mTrip.getRouteId() == 3L) {
+		} else if (rsn == 3L) {
 			if (Arrays.asList( //
 					"Valleycliffe-Spruce Loop Only", //
 					"Valleycliffe" //
@@ -285,7 +290,7 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public int getStopId(GStop gStop) {
-		return Integer.parseInt(gStop.getStopCode()); // use stop code as stop ID
+	public int getStopId(GStop gStop) { // used by GTFS-RT
+		return super.getStopId(gStop);
 	}
 }
