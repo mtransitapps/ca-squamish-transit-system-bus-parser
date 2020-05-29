@@ -172,11 +172,12 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(//
 								Stops.getALL_STOPS().get("102762"), // Northbound Spruce at Chestnut
 								Stops.getALL_STOPS().get("102749"), // ++ Westway at Cedar (SB)
-								Stops.getALL_STOPS().get("102729") // Westbound Pemberton at Third #DOWNTOWN
+								Stops.getALL_STOPS().get("102729"), // Westbound Pemberton at Third #DOWNTOWN
+								Stops.getALL_STOPS().get("102738") // 2nd @ Main (SB) #DOWNTOWN
 						)) //
 				.addTripSort(StrategicMappingCommons.COUNTERCLOCKWISE_1, //
 						Arrays.asList(//
-								Stops.getALL_STOPS().get("102729"), // Westbound Pemberton at Third #DOWNTOWN
+								Stops.getALL_STOPS().get("102738"), // 2nd @ Main (SB) #DOWNTOWN
 								Stops.getALL_STOPS().get("102734"), // == Cleveland at Hunter (EB)
 								Stops.getALL_STOPS().get("102706"), // != Behrner at Clarke (NB)
 								Stops.getALL_STOPS().get("102705"), // != Clarke at Behrner (SB)
