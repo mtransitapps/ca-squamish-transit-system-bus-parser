@@ -17,10 +17,7 @@ import org.mtransit.parser.mt.data.MAgency;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.mtransit.parser.StringUtils.EMPTY;
@@ -145,45 +142,21 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return super.getRouteColor(gRoute);
 	}
 
-	private final HashMap<Long, Long> routeIdToShortName = new HashMap<>();
-
 	@Override
 	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
-		final long rsn = Long.parseLong(mRoute.getShortNameOrDefault());
-		this.routeIdToShortName.put(mRoute.getId(), rsn);
-		mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()), gTrip.getDirectionIdOrDefault());
+		mTrip.setHeadsignString(
+				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
+				gTrip.getDirectionIdOrDefault()
+		);
+	}
+
+	@Override
+	public boolean directionFinderEnabled() {
+		return true;
 	}
 
 	@Override
 	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
-		List<String> headsignsValues = Arrays.asList(mTrip.getHeadsignValue(), mTripToMerge.getHeadsignValue());
-		final long rsn = this.routeIdToShortName.get(mTrip.getRouteId());
-		if (rsn == 1L) {
-			if (Arrays.asList( //
-					"Garibaldi Vlg", //
-					"Downtown" //
-			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
-				return true;
-			}
-		} else if (rsn == 2L) {
-			if (Arrays.asList( //
-					"Garibaldi Vlg", //
-					"Brackendale", //
-					"Downtown" //
-			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Downtown", mTrip.getHeadsignId());
-				return true;
-			}
-		} else if (rsn == 3L) {
-			if (Arrays.asList( //
-					"Valleycliffe-Spruce Loop Only", //
-					"Valleycliffe" //
-			).containsAll(headsignsValues)) {
-				mTrip.setHeadsignString("Valleycliffe", mTrip.getHeadsignId());
-				return true;
-			}
-		}
 		throw new MTLog.Fatal("Unexpected trips to merge: %s & %s!", mTrip, mTripToMerge);
 	}
 
