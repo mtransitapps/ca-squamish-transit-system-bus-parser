@@ -13,8 +13,7 @@ import org.mtransit.parser.mt.data.MAgency;
 
 import java.util.regex.Pattern;
 
-// https://bctransit.com/*/footer/open-data
-// https://bctransit.com/servlet/bctransit/data/GTFS - Squamish
+// https://www.bctransit.com/open-data
 // https://squamish.mapstrat.com/current/google_transit.zip
 public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 
