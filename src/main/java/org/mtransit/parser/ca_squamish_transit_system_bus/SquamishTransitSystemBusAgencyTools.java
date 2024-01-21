@@ -14,7 +14,6 @@ import org.mtransit.parser.mt.data.MAgency;
 import java.util.regex.Pattern;
 
 // https://www.bctransit.com/open-data
-// https://squamish.mapstrat.com/current/google_transit.zip
 public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(@NotNull String[] args) {
@@ -54,6 +53,11 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public boolean useRouteShortNameForRouteId() {
 		return false; // route ID used by GTFS-RT
+	}
+
+	@Override
+	public @Nullable String getRouteIdCleanupRegex() {
+		return "\\-[A-Z]+$";
 	}
 
 	@Override
