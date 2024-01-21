@@ -31,14 +31,6 @@ public class SquamishTransitSystemBusAgencyTools extends DefaultAgencyTools {
 		return "Squamish TS";
 	}
 
-	private static final String INCLUDE_AGENCY_ID = "1"; // Squamish Transit System only
-
-	@Nullable
-	@Override
-	public String getAgencyId() {
-		return INCLUDE_AGENCY_ID;
-	}
-
 	@NotNull
 	@Override
 	public Integer getAgencyRouteType() {
